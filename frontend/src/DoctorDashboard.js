@@ -4,7 +4,6 @@ import TableContainer from './TableContainer';
 import { SelectColumnFilter } from './Filter';
 import { Col, Row } from 'reactstrap';
 import Prescribe from './Prescribe';
-import jsonData from './db.json';
 
 function DoctorDashboard(props) {
   const [patients, setPatients] = useState();
@@ -20,11 +19,6 @@ function DoctorDashboard(props) {
 
   const server_addr = props.server_addr;
   // const did = props.did;
-
-  // useEffect(() => {
-  //   setPatients(jsonData['doctors']);
-  //   setUpcoming(jsonData['doctors']);
-  // }, []);
 
   useEffect(() => {
     setDid(props.did)

@@ -3,7 +3,6 @@ import Table from './Table';
 import { Col, Label, Row, Input, Button } from 'reactstrap';
 import TableContainer from './TableContainer';
 import { SelectColumnFilter } from './Filter';
-import jsonData from './db.json';
 
 function AdmitPatient(props) {
     const [patients, setPatients] = useState([]);
@@ -12,9 +11,6 @@ function AdmitPatient(props) {
 
     const server_addr = props.server_addr;
 
-    // useEffect(() => {
-    //     setPatients(jsonData['patients']);
-    // }, []);
 
     useEffect(() => {
         fetch('http://' + server_addr + '/front-desk/discharge')

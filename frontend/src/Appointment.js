@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Col, Label, Row, Input, Button } from 'reactstrap';
 import TableContainer from './TableContainer';
 import { SelectColumnFilter } from './Filter';
-import jsonData from './db.json';
 
 function Appointment(props) {
     const [patients, setPatients] = useState([]);

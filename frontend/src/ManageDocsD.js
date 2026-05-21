@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Table from './Table';
-import jsonData from './db.json';
 import { FormGroup, Label, Col, Input, Form, Button } from "reactstrap";
 
 function ManageDocsD(props) {
@@ -11,9 +10,6 @@ function ManageDocsD(props) {
 
   const server_addr = props.server_addr;
 
-  useEffect(() => {
-    setPatients(jsonData['doctors']);
-  }, []);
 
   useEffect(() => {
     fetch('http://' + server_addr + '/doctor/' + did)

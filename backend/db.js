@@ -1,48 +1,73 @@
 const mysql = require('mysql2');
+require('dotenv').config();
 
-// Create a MySQL connection pool
 const pool = mysql.createPool({
-	host: '10.5.18.71',
-	user: '20CS30021',
-	password: '20CS30021',
-	database: '20CS30021'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-// Test the connection
+// Test connection
 pool.getConnection((err, connection) => {
     if (err) {
-        console.error('Error connecting to MySQL database: ', err);
+        console.error('Error connecting to MySQL database:', err);
         return;
     }
+
     console.log('Connected to MySQL database!');
     connection.release();
 });
 
-function executeQuery(sql_query, req){  
-    return new Promise((resolve, reject) => {
-        let status = 200, message = 'OK';
+function executeQuery(sql_query, req) {
+    return new Promise((resolve) => {
+
+        let status = 200;
+        let message = 'OK';
+
         req.db.getConnection((err, connection) => {
+
             if (err) {
-                console.error('Error connecting to MySQL database: ', err);
-                status = 500; message = 'Internal Server Error'; 
-                connection.release();
-                resolve({status, message, rows: []});
+                console.error('Database connection error:', err);
+
+                status = 500;
+                message = 'Internal Server Error';
+
+                resolve({
+                    status,
+                    message,
+                    rows: []
+                });
+
                 return;
             }
-            
-      
-            connection.query(sql_query, (err, rows, fields) => {
-                if(err){
-                    status= 400; message = 'SQL query error';
+
+            connection.query(sql_query, (err, rows) => {
+
+                if (err) {
                     console.log(err);
+
+                    status = 400;
+                    message = 'SQL query error';
                 }
+
                 connection.release();
-                resolve({status, message, rows});
+
+                resolve({
+                    status,
+                    message,
+                    rows
+                });
             });
-            
-            
         });
     });
 }
 
-module.exports = {executeQuery, pool};
+module.exports = {
+    executeQuery,
+    pool
+};

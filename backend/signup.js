@@ -12,11 +12,16 @@ function createUser(req, res){
     //insert transformedObj into database hms 
     const encrypted = encrypt(transformedObj.Password);
    
-    const sqll = `INSERT INTO User (Name, Email, employee_id, Password, iv, type) VALUES ('${transformedObj.Name}', '${transformedObj.Email}', '${transformedObj.employee_id}', '${encrypted.encrypted_password}', '${encrypted.iv}', '${transformedObj.type}')`;
-    pool.query(sqll, (err, result)=>{
-        if(err) throw err;
-        console.log(result)
+    const sqll = `INSERT INTO User (EmployeeID, Type, Name, Email, Password, Pass_iv) VALUES ('${transformedObj.employee_id}', '${transformedObj.type}', '${transformedObj.Name}', '${transformedObj.Email}', '${encrypted.encrypted_password}', '${encrypted.iv}')`;
+    
+    executeQuery(sqll, req).then(result => {
+        if(result.status != 200){
+            res.status(result.status).send(result);
+            return;
+        }
         res.send(JSON.stringify({ message: 'Signup successful' }));
+    }).catch(err => {
+        res.status(500).send({ message: 'Error' });
     });
   }
   

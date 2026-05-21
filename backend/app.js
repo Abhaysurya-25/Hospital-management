@@ -1,19 +1,19 @@
 const express = require('express');
 const cors = require('cors');
- 
-const {pool, executeQuery} = require('./db');
+
+const { pool, executeQuery } = require('./db');
 const sendMail = require('./send-mail');
 
-  
+
 // create express app and start server
 const app = express();
-app.use(express.json({limit: '20mb'}));
+app.use(express.json({ limit: '20mb' }));
 app.use(cors());
 
 
 const port_no = 3001;
 
-app.listen(port_no, function(){
+app.listen(port_no, function () {
     console.log('Server is running on port ', port_no, '...');
 });
 
@@ -47,7 +47,7 @@ app.use('/data-entry', dataEntryRouter);
 
 // 404 Handler
 app.use((req, res) => {
-    res.status(404).send({message: 'NOT FOUND!'});
+    res.status(404).send({ message: 'NOT FOUND!' });
 });
 
 // Error Handling
@@ -59,9 +59,9 @@ app.use((err, req, res, next) => {
 
 
 
-async function test(){
+async function test() {
     let sql_query, physicians, mailText;
-    const abc={db: pool};
+    const abc = { db: pool };
 
     // get all physicians
     sql_query = `SELECT PhysicianID FROM Physician;`;
@@ -74,50 +74,51 @@ async function test(){
         sql_query = `SELECT Email FROM User WHERE EmployeeID='${physician.PhysicianID}';`;
         let doc_email = await executeQuery(sql_query, abc);
 
-        let act_email=doc_email.rows[0].Email;
+        let act_email = doc_email.rows[0].Email;
         console.log(act_email);
 
         //get all patients of the physician
-        sql_query = `SELECT Patient_Name, Patient.Patient_SSN, Email, Appointment.Date`+
-                    ` FROM Patient NATURAL JOIN Physician NATURAL JOIN Appointment WHERE `+
-                    `Physician.PhysicianID='${physician.PhysicianID}';`;
-        
-        
+        sql_query = `SELECT Patient_Name, Patient.Patient_SSN, Email, Appointment.Date` +
+            ` FROM Patient NATURAL JOIN Physician NATURAL JOIN Appointment WHERE ` +
+            `Physician.PhysicianID='${physician.PhysicianID}';`;
+
+
         let result = await executeQuery(sql_query, abc);
         //console.log(result);
         // Assuming that the result of the SQL query is stored in a variable called 'result'
-        
+
         mailText = `Dear Physician,\n\nHere are the details of your patients:\n\n`;
-        
+
         // Loop through each row in the result and add it to the mailText
         result.rows.forEach(row => {
-        mailText += `Patient Name: ${row.Patient_Name}\n`;
-        mailText += `Patient SSN: ${row.Patient_SSN}\n`;
-        mailText += `Email: ${row.Email}\n`;
-        mailText += `Appointment Date: ${row.Date}\n\n`;
-        // mailText += `Test Result: ${row.Test_Result}\n`;
-        // mailText += `Test Image: ${row.Test_Image}\n`;
-        // mailText += `Test Date: ${row.Test_Date}\n`;
-        // mailText += `Treatment Name: ${row.Treatment_Name}\n`;
-        // mailText += `Treatment Date: ${row.Treatment_Date}\n\n`;
+            mailText += `Patient Name: ${row.Patient_Name}\n`;
+            mailText += `Patient SSN: ${row.Patient_SSN}\n`;
+            mailText += `Email: ${row.Email}\n`;
+            mailText += `Appointment Date: ${row.Date}\n\n`;
+            // mailText += `Test Result: ${row.Test_Result}\n`;
+            // mailText += `Test Image: ${row.Test_Image}\n`;
+            // mailText += `Test Date: ${row.Test_Date}\n`;
+            // mailText += `Treatment Name: ${row.Treatment_Name}\n`;
+            // mailText += `Treatment Date: ${row.Treatment_Date}\n\n`;
         });
-        
+
         // Add closing message to the mailText
         mailText += `Thank you,\nYour Hospital`;
         console.log(mailText);
 
         // Send the mail
-        sendMail(act_email,"Weekly Report", mailText);
-       
-        
-       
+        sendMail(act_email, "Weekly Report", mailText);
+
+
+
     });
-  
-} 
+
+}
 
 
 setInterval(() => {
-    test(); }, 7*24*60*60*1000);
+    test();
+}, 7 * 24 * 60 * 60 * 1000);
 
 
 

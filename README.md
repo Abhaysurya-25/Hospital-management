@@ -18,7 +18,7 @@ This web application is designed to manage patient information and appointments 
 
 * Front-end: HTML, CSS, JavaScript, and ReactJS
 
-* Back-end: Node.js, Express.js, mysql2, and cors middleware
+* Back-end: Node.js, Express.js, mysql2
 
 * Database: MySQL
 
